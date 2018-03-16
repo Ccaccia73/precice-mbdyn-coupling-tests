@@ -40,13 +40,9 @@ bin/*
 *.dat
 *.vtk
 *.csv
-iterations-SU2_CFD.txt
-*watchpoint.txt
 
 
 # ignore MBDyn output files
-convergence-MBDyn.txt
-iterations-MBDyn.txt
 Event*.log
 *.frc
 *.ine
@@ -55,6 +51,10 @@ Event*.log
 *.mov
 *.out
 *.sock
+
+# ignore coupling output files
+convergence*.txt
+iterations*.txt
 *watchpoint.txt
 
 # results

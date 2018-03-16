@@ -18,7 +18,6 @@
       </mesh>
 
       <participant name="SU2_CFD">
-         <master:mpi-single/>
          <use-mesh name="Rigid_Mesh" from="Rigid"/>
          <use-mesh name="SU2_Mesh0" provide="yes"/>
          <write-data name="Forces0" mesh="SU2_Mesh0"/>
@@ -31,7 +30,7 @@
             constraint="consistent" timing="initial"/>
         <!--watch-point mesh="SU2_Mesh0" name="point1" coordinate="0.1; 0.5; 1.6"-->
       </participant>
-
+    
       <participant name="Rigid">
          <use-mesh name="Rigid_Mesh" provide="yes"/>
          <write-data name="DisplacementDeltas0" mesh="Rigid_Mesh"/>
@@ -45,8 +44,8 @@
 
 
       <coupling-scheme:serial-implicit>
-           <participants first="Rigid" second="SU2_CFD"/>
-           <max-time value="0.725"/>
+           <participants first="SU2_CFD" second="Rigid"/>
+           <max-time value="5.0"/>
            <timestep-length value="1e-2" />
            <exchange data="Forces0" mesh="Rigid_Mesh" from="SU2_CFD" to="Rigid"/>
            <exchange data="DisplacementDeltas0" mesh="Rigid_Mesh" from="Rigid" to="SU2_CFD" />
@@ -54,8 +53,13 @@
            <relative-convergence-measure limit="1e-1" data="DisplacementDeltas0" mesh="Rigid_Mesh"/>
            <relative-convergence-measure limit="1e-1" data="Forces0" mesh="Rigid_Mesh"/>
            <extrapolation-order value="2"/>
+           <post-processing:aitken>
+              <data name="DisplacementDeltas0" mesh="Rigid_Mesh"/>
+              <initial-relaxation value="0.9"/>
+           </post-processing:aitken>
       </coupling-scheme:serial-implicit>
 
    </solver-interface>
 
 </precice-configuration>
+
