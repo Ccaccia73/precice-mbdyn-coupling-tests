@@ -30,3 +30,40 @@
 *.exe
 *.out
 *.app
+
+# Ignore `bin` dir
+bin/
+# or
+*/bin/*
+
+# ignore SU2 output files
+*.dat
+*.vtk
+*.csv
+iterations-SU2_CFD.txt
+*watchpoint.txt
+
+
+# ignore MBDyn output files
+convergence-MBDyn.txt
+iterations-MBDyn.txt
+Event*.log
+*.frc
+*.ine
+*.jnt
+*.log
+*.mov
+*.out
+*.sock
+*watchpoint.txt
+
+# results
+.ipynb_checkpoints/
+
+# Eclipse related files and dirs
+.project
+.cproject
+.settings/
+
+
+
