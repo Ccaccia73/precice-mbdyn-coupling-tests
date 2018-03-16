@@ -20,8 +20,14 @@ commands:
 - in one shell start MBDyn form the mbd directory: mbdyn -f input.mbd - o output
 - in the other shell run ./bin/ts_driver
 
-4) *mbdyn-external*: test to use an external node:
+4) *mbdyn-external* : test to use an external node:
 
 - from the mbd subdirectory launch mbdyn -f spring1.mbd
 - form the bin directory launch ./mbdyn_external
-- the output file "Forces.txt" is analysed in the notebook subdirectory 
+- the output file "Forces.txt" is analysed in the notebook subdirectory
+
+5) *extnode-tsdriver* : test to use both an external node and an external delta t driver:
+
+- form the mbd subdirectory launch mbdyn sm_driver_1.mbd
+- from the bin subdirectory launch ./ts_node
+
