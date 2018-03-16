@@ -53,9 +53,9 @@ Event*.log
 *.sock
 
 # ignore coupling output files
-convergence*.txt
-iterations*.txt
-*watchpoint.txt
+#convergence*.txt
+#iterations*.txt
+#*watchpoint.txt
 
 # results
 .ipynb_checkpoints/

@@ -31,3 +31,5 @@ commands:
 - form the mbd subdirectory launch mbdyn sm_driver_1.mbd
 - from the bin subdirectory launch ./ts_node
 
+
+6) 
