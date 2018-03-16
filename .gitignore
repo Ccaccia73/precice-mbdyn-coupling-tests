@@ -31,10 +31,10 @@
 *.out
 *.app
 
-# Ignore `bin` dir
-bin/
+# Ignore content of `bin` dir
+#bin/
 # or
-*/bin/*
+bin/*
 
 # ignore SU2 output files
 *.dat
@@ -64,6 +64,8 @@ Event*.log
 .project
 .cproject
 .settings/
+RemoteSystemsTempFiles/
+
 
 
 

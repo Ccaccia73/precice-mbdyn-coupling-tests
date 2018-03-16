@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+
+<precice-configuration>
+
+  <solver-interface dimensions="2">
+
+      <data:vector name="Forces0"/>
+      <data:vector name="DisplacementDeltas0"/>
+
+      <mesh name="SU2_Mesh0">
+         <use-data name="Forces0"/>
+         <use-data name="DisplacementDeltas0"/>
+      </mesh>
+
+      <mesh name="Rigid_Mesh">
+         <use-data name="DisplacementDeltas0"/>
+         <use-data name="Forces0"/>
+      </mesh>
+
+      <participant name="SU2_CFD">
+         <use-mesh name="Rigid_Mesh" from="Rigid"/>
+         <use-mesh name="SU2_Mesh0" provide="yes"/>
+         <write-data name="Forces0" mesh="SU2_Mesh0"/>
+         <read-data  name="DisplacementDeltas0" mesh="SU2_Mesh0"/>
+         <mapping:nearest-neighbor
+            direction="write" from="SU2_Mesh0" to="Rigid_Mesh"
+            constraint="conservative" timing="initial"/>
+         <mapping:nearest-neighbor
+            direction="read" from="Rigid_Mesh" to="SU2_Mesh0"
+            constraint="consistent" timing="initial"/>
+        <!--watch-point mesh="SU2_Mesh0" name="point1" coordinate="0.1; 0.5; 1.6"-->
+      </participant>
+    
+      <participant name="Rigid">
+         <use-mesh name="Rigid_Mesh" provide="yes"/>
+         <write-data name="DisplacementDeltas0" mesh="Rigid_Mesh"/>
+         <read-data  name="Forces0"      mesh="Rigid_Mesh"/>
+        <watch-point mesh="Rigid_Mesh" name="point1" coordinate="0;0" />
+      </participant>
+
+    <!-- Communication method, use TCP/IP sockets, change network to "ib0" on SuperMUC -->
+      <m2n:sockets from="SU2_CFD" to="Rigid"  exchange-directory="/home/claudio/Projects/PreCICE/rigid_motion" distribution-type="gather-scatter"/>
+
+
+
+      <coupling-scheme:serial-implicit>
+           <participants first="SU2_CFD" second="Rigid"/>
+           <max-time value="5.0"/>
+           <timestep-length value="1e-2" />
+           <exchange data="Forces0" mesh="Rigid_Mesh" from="SU2_CFD" to="Rigid"/>
+           <exchange data="DisplacementDeltas0" mesh="Rigid_Mesh" from="Rigid" to="SU2_CFD" />
+           <max-iterations value="50"/>
+           <relative-convergence-measure limit="1e-1" data="DisplacementDeltas0" mesh="Rigid_Mesh"/>
+           <relative-convergence-measure limit="1e-1" data="Forces0" mesh="Rigid_Mesh"/>
+           <extrapolation-order value="2"/>
+           <post-processing:aitken>
+              <data name="DisplacementDeltas0" mesh="Rigid_Mesh"/>
+              <initial-relaxation value="0.9"/>
+           </post-processing:aitken>
+      </coupling-scheme:serial-implicit>
+
+   </solver-interface>
+
+</precice-configuration>
+
