@@ -1,0 +1,86 @@
+<?xml version="1.0"?>
+
+<precice-configuration>
+
+  <solver-interface dimensions="2">
+
+      <data:vector name="Forces0"/>
+      <data:vector name="DisplacementDeltas0"/>
+
+      <mesh name="SU2_Mesh0">
+         <use-data name="Forces0"/>
+         <use-data name="DisplacementDeltas0"/>
+      </mesh>
+
+      <mesh name="Rigid_Mesh">
+         <use-data name="DisplacementDeltas0"/>
+         <use-data name="Forces0"/>
+      </mesh>
+
+
+      <participant name="SU2_CFD">
+         <use-mesh name="Rigid_Mesh" from="Rigid"/>
+         <use-mesh name="SU2_Mesh0" provide="yes"/>
+         <write-data name="Forces0" mesh="SU2_Mesh0"/>
+         <read-data  name="DisplacementDeltas0" mesh="SU2_Mesh0"/>
+         <mapping:rbf-volume-splines direction="write" constraint="conservative" from="SU2_Mesh0" to="Rigid_Mesh" timing="initial"/>
+         <mapping:rbf-volume-splines direction="read" constraint="consistent" from="Rigid_Mesh" to="SU2_Mesh0" timing="initial"/>
+        <!-- <mapping:nearest-neighbor direction="read" from="Rigid_Mesh" to="SU2_Mesh0" constraint="consistent" timing="initial"/>  -->
+        <!--watch-point mesh="SU2_Mesh0" name="point1" coordinate="0.1; 0.5; 1.6"-->
+      </participant>
+
+      <participant name="Rigid">
+         <use-mesh name="Rigid_Mesh" provide="yes"/>
+         <!--<use-mesh name="SU2_Mesh0" from="SU2_CFD"/> -->
+         <write-data name="DisplacementDeltas0" mesh="Rigid_Mesh"/>
+         <read-data  name="Forces0"      mesh="Rigid_Mesh"/>
+         <watch-point mesh="Rigid_Mesh" name="tip" coordinate="-0.25;0.0" />
+         <watch-point mesh="Rigid_Mesh" name="tail" coordinate="0.75;0.0" />
+      </participant>
+
+
+
+    <!-- Communication method, use TCP/IP sockets, change network to "ib0" on SuperMUC -->
+      <!-- <m2n:sockets from="SU2_CFD" to="Rigid"  exchange-directory="./" distribution-type="gather-scatter"/> -->
+      <!--<m2n:sockets port="0" distribution-type="point-to-point" exchange-directory="/home/claudio/Projects/PreCICE/rigid_force/0012_points" from="Rigid" network="lo" to="SU2_CFD"/> -->
+      
+      <m2n:sockets from="SU2_CFD" to="Rigid"  exchange-directory="/home/claudio/Projects/PreCICE/rigid_force/0012_points" distribution-type="gather-scatter"/>
+
+      <coupling-scheme:parallel-explicit>
+          <participants first="Rigid" second="SU2_CFD"/>
+          <max-time value="4.0"/>
+          <timestep-length value="1e-2"/>
+          
+          <exchange data="Forces0" mesh="Rigid_Mesh" from="SU2_CFD" to="Rigid"/>
+          <exchange data="DisplacementDeltas0" mesh="Rigid_Mesh" from="Rigid" to="SU2_CFD" />
+          <!--<relative-convergence-measure limit="1e-3" data="DisplacementDeltas0" mesh="Rigid_Mesh"/>
+          <relative-convergence-measure limit="1e-3" data="Forces0" mesh="Rigid_Mesh"/> 
+          <extrapolation-order value="2"/>-->
+
+           <!--<post-processing:IQN-ILS>
+               <data name="DisplacementDeltas0" mesh="Rigid_Mesh"/>
+               <data name="Forces0" mesh="Rigid_Mesh"/>
+               <preconditioner type="residual-sum"/>
+               <filter type="QR1" limit="1e-6"/>
+               <initial-relaxation value="0.5"/>
+               <max-used-iterations value="40"/>
+               <timesteps-reused value="10"/>
+           </post-processing:IQN-ILS> -->
+      </coupling-scheme:parallel-explicit>
+
+<!--
+      <coupling-scheme:serial-implicit>
+           <participants first="Rigid" second="SU2_CFD"/>
+           <max-time value="4.0"/>
+           <timestep-length value="1e-2" />
+           <exchange data="Forces0" mesh="Rigid_Mesh" from="SU2_CFD" to="Rigid"/>
+           <exchange data="DisplacementDeltas0" mesh="Rigid_Mesh" from="Rigid" to="SU2_CFD" />
+           <max-iterations value="50"/>
+           <relative-convergence-measure limit="1e-1" data="DisplacementDeltas0" mesh="Rigid_Mesh"/>
+           <relative-convergence-measure limit="1e-1" data="Forces0" mesh="Rigid_Mesh"/>
+           <extrapolation-order value="2"/>
+      </coupling-scheme:serial-implicit>
+-->
+   </solver-interface>
+
+</precice-configuration>

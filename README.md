@@ -3,9 +3,15 @@ Tests to couple MBDyn with PreCICE
 
 ## List of tests:
 
-1) *rigid_motion* : an airfoil is rotated with specific pattern and forces are measured.
+1) *rigid_motion* : an airfoil is moved with specific pattern and forces are measured. First test, might be incomplete, better use the next one.
 
 commands:
 - in *fluid* SU2_CFD rigid_config.cfg   (assuming SU2_CFD in path)
 - in *rigid* ../coupling-code/bin/RigidMotion ../config.xml NACA_0012.foil  (assuming that coupling code has been compiled)
+
+2) *0012_points* : a NACA0012 airfoil is rotated with the pattern shown in the graph and forces are measured. the CL is computed and compared to theoric. Different number of points is considered for the rigid mesh
+
+- *fluid-start* : is used to create a first solution to be used in the fluid solver. **SU2_CFD force_start_config.cfg** and copy **restart_flow.dat** into *fluid* as **restart_flow_00000.dat**
+- in *fluid* :  SU2_CFD rigid:config.cfg 
+- in *rigid* :  the executable is the same of the first test: RigidMotion ../config.xml /foils/NACA_0012_XXX.foil
 
