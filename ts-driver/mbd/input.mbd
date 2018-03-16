@@ -1,0 +1,77 @@
+# Minimalist example showing how to impose a variable timestep to 
+# MBDyn from an external code written in FORTRAN.
+# The external code calls a "subroutine" (more precisely a function) 
+# written in C which is used to communicate the timestep through the UNIX 
+# socket opened by MBDyn.
+
+# You have to impose the initial time step (and it seems that the second 
+# time step is equal to the first one unless I made a mistake somewhere).
+
+
+begin: data;
+
+    problem: initial value;
+
+end: data;
+
+begin: initial value;
+
+    initial time:   0.;
+    final time:     1.;
+    time step:      1.e-3; # initial time step
+    max iterations: 10;
+    tolerance:      1.e-9;
+
+    threads: disable;
+
+    set: const integer TIMESTEP = 1;
+    # change the time step as specified by the drive caller 
+    # labeled TIMESTEP, whose definition is postponed (this 
+    # is simply a placeholder):
+    strategy: change, postponed, TIMESTEP;
+
+end: initial value;
+
+begin: control data;
+
+    structural nodes: 1;
+    joints:           1;
+    file drivers:     1;
+
+end: control data;
+
+begin: nodes;
+
+    structural: 1, dynamic, null, eye, null, null;
+
+end: nodes;
+
+begin: drivers;
+
+    set: const integer INPUT = 200 ;
+
+    file: INPUT, stream,
+        stream drive name, "TS_DRV",
+        create, yes,
+        path, "../mbdyn.ts.sock",
+        1;   # one channel : the time step
+
+    # replace placeholder with file driver
+    drive caller: TIMESTEP, file, INPUT, 1;
+
+end: drivers;
+
+begin: elements;
+
+    # A node moving towards x-axis
+    joint: 10, 
+        total pin joint,
+            1,
+            position constraint,
+                active, active, active,
+                    single, 1., 0., 0., ramp, 1., 0., forever, 0.,
+            orientation constraint,
+                active, active, active,
+                    null;
+
+end: elements;

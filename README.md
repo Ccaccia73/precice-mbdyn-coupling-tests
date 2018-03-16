@@ -15,3 +15,9 @@ commands:
 - in *fluid* :  SU2_CFD rigid:config.cfg 
 - in *rigid* :  the executable is the same of the first test: RigidMotion ../config.xml /foils/NACA_0012_XXX.foil
 
+3) *ts-driver* : test to set external time step to MBDyn
+
+- in one shell start MBDyn form the mbd directory: mbdyn -f input.mbd - o output
+- in the other shell run ./bin/ts_driver
+
+ 
