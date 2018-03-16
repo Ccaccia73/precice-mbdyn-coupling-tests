@@ -32,4 +32,9 @@ commands:
 - from the bin subdirectory launch ./ts_node
 
 
-6) 
+6) *rigid-mbdyn* a NACA0012 airfoil is put in a freestream @ Mach=0.5 with AoA = 1.5°. the quarter chord is connected to ground by means of a "deformable displacement joint". In MBDyn the airfoil is a dynamic node with mass. 
+
+components to be executed (in this order):
+a) in fluid subdirectory: SU2_CFG mbd_config.cfg
+b) in mbd subdirectory:  mbdyn ext_sm_driver.mbd
+c) in mbd subdirectory: ./mbd_node_ts ../config.xml ./foils/NACA_0012_100.dat   (executable copied or symlinked from node-ts-precice subdirectory)
