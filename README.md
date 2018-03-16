@@ -20,4 +20,8 @@ commands:
 - in one shell start MBDyn form the mbd directory: mbdyn -f input.mbd - o output
 - in the other shell run ./bin/ts_driver
 
- 
+4) *mbdyn-external*: test to use an external node:
+
+- from the mbd subdirectory launch mbdyn -f spring1.mbd
+- form the bin directory launch ./mbdyn_external
+- the output file "Forces.txt" is analysed in the notebook subdirectory 
