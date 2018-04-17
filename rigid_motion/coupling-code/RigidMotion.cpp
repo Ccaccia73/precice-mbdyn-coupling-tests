@@ -6,6 +6,7 @@
  */
 
 #include "precice/SolverInterface.hpp"
+#include "boost/format.hpp"
 
 #include <iostream>
 #include <fstream>
@@ -53,7 +54,7 @@ void readFoil(std::vector<double>& x, std::vector<double>& y, const float c, con
 
 void setDisplacements(double* displacements, double* coords, int size, double* ca, double t, double dt, std::ofstream& file){
 
-	const double omega_d = -2.0*2; // x2 dato che il movimento si ha solo nel primo mezzo secondo
+	const double omega_d = -1.5*2; // x2 dato che il movimento si ha solo nel primo mezzo secondo
 
 	const double omega = omega_d*M_PI/180.0;
 
@@ -66,8 +67,8 @@ void setDisplacements(double* displacements, double* coords, int size, double* c
 			dalpha = omega_d*dt;
 			displacements[2*i] =  -(coords[2*i+1]-ca[1])*omega*dt;
 			displacements[2*i+1] = (coords[2*i]-ca[0])*omega*dt;
-			coords[2*i] += displacements[2*i];
-			coords[2*i+1] += displacements[2*i+1];
+			//coords[2*i] += displacements[2*i];
+			//coords[2*i+1] += displacements[2*i+1];
 		}else{
 			dalpha = 0.0;
 			displacements[2*i] =  0.0; //(coords[2*i+1]-ca[1])*alpha0*delta;
@@ -91,7 +92,7 @@ void computeForces(double* forces, double* coords, int size, double* ca, double 
 		fy += forces[2*i+1];
 		mz = mz - forces[2*i]*(coords[2*i+1] - ca[1]) + forces[2*i+1]*(coords[2*i]-ca[0]);
 	}
-	std::cout << "timestep: " << t << "\tFx: " << fx << "\tFy: " << fy << "\tMz: " << mz << std::endl;
+	std::cout << "timestep: " << boost::format("%1.3f") % t << "\tFx: " << boost::format("%5.2e") % fx << "\tFy: " << boost::format("%5.2e") % fy << "\tMz: " << boost::format("%5.2e") % mz << std::endl;
 
 	file << fx << "\t" << fy << "\t" << mz << std::endl;
 }
@@ -182,6 +183,13 @@ int main(int argc, char **argv) {
 
 	outputFile << "t\tdt\tda\tx\ty\tdx\tdy\tFx\tFy\tMz" << std::endl;
 
+	std::cout << "Start" << std::endl;
+
+	if (interface.isReadDataAvailable()){
+		interface.readBlockVectorData(forceID, vertexSize, vertexIDs, forces);
+	}
+
+
 	while (interface.isCouplingOngoing()){
 	  if(interface.isActionRequired(cowic)){
 	    // saveOldState(); // save checkpoint
@@ -193,9 +201,6 @@ int main(int argc, char **argv) {
 
 	  dt = std::min(precice_dt, dt);
 
-	  // computeTimeStep();
-	  t += dt;
-
 	  setDisplacements(displacements, coords, vertexSize, ca, t, dt, outputFile);
 
 	  interface.writeBlockVectorData(displID, vertexSize, vertexIDs, displacements);
@@ -204,15 +209,26 @@ int main(int argc, char **argv) {
 
 	  interface.readBlockVectorData(forceID, vertexSize, vertexIDs, forces);
 
-	  computeForces(forces, coords, vertexSize, ca, t, outputFile);
 
+	  if(interface.isActionRequired(cowic)){
+		  interface.fulfilledAction(cowic);
+	  }
 
 	  if(interface.isActionRequired(coric)){ // timestep not converged
 	    // reloadOldState(); // set variables back to checkpoint
 	    interface.fulfilledAction(coric);
 	  }
 	  else{ // timestep converged
-	    // endTimeStep(); // e.g. update variables, increment time
+		  // computeTimeStep();
+		  t += dt;
+		  // endTimeStep(); // e.g. update variables, increment time
+		  for(int i = 0; i < vertexSize; i++){
+			  coords[2*i] += displacements[2*i];
+			  coords[2*i+1] += displacements[2*i+1];
+		  }
+
+		  computeForces(forces, coords, vertexSize, ca, t, outputFile);
+
 	  }
 	}
 

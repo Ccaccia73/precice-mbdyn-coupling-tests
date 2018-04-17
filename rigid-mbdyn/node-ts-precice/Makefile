@@ -2,10 +2,10 @@ CXXFLAGS =	-O2 -g -Wall -fmessage-length=0 -Wall -std=c++11
 
 
 #include paths
-INCLUDE_DIRS = -I/home/claudio/Projects/PreCICE/mbdyn/include -I/home/claudio/Projects/PreCICE/precice/src/ -I/home/claudio/Projects/PreCICE/boost/1_66_0/include
+INCLUDE_DIRS = -I/home/claudio/Projects/PreCICE/mbdyn/include -I/home/claudio/Projects/PreCICE/precice/src/ -I/home/claudio/Projects/PreCICE/boost/1_66_0_openmpi/include
 
 # libraries
-LIBS = -L/home/claudio/Projects/PreCICE/mbdyn/lib -lmbc -L/home/claudio/Projects/PreCICE/precice/build/last -lprecice -L/home/claudio/Projects/PreCICE/boost/1_66_0/lib  -lboost_log -lboost_log_setup -lboost_thread -lboost_system -lboost_filesystem -lboost_program_options -lboost_regex
+LIBS = -L/home/claudio/Projects/PreCICE/mbdyn/lib -lmbc -L/home/claudio/Projects/PreCICE/precice/build/last -lprecice -L/home/claudio/Projects/PreCICE/boost/1_66_0_openmpi/lib  -lboost_log -lboost_log_setup -lboost_thread -lboost_system -lboost_filesystem -lboost_program_options -lboost_regex
 
 # project directories
 SRC_DIR = ./src
