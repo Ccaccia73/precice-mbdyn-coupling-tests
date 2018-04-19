@@ -3,6 +3,7 @@
 <precice-configuration>
 
   <solver-interface dimensions="2">
+
       <data:vector name="Forces0"/>
       <data:vector name="DisplacementDeltas0"/>
 

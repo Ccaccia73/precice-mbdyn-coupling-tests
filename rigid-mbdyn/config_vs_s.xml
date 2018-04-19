@@ -18,20 +18,28 @@
 		
 		<participant name="SU2_CFD">
 			
-			<master:mpi-single/>
+			<!--<master:mpi-single/>-->
 			
 			<use-mesh name="Rigid_Mesh" from="MBDyn"/>
 			<use-mesh name="SU2_Mesh0" provide="yes"/>
 			<write-data name="Forces0" mesh="SU2_Mesh0"/>
 			<read-data  name="DisplacementDeltas0" mesh="SU2_Mesh0"/>
 			
-			<mapping:petrbf-compact-tps-c2 support-radius="0.05"
+			<mapping:petrbf-volume-splines
 				direction="write" from="SU2_Mesh0" to="Rigid_Mesh"
-				constraint="conservative" timing="initial"/>
+				constraint="conservative" timing="initial"/>-->
 			
-			<mapping:petrbf-compact-tps-c2 support-radius="0.05"
+			<mapping:petrbf-volume-splines
 				direction="read" from="Rigid_Mesh" to="SU2_Mesh0"
 				constraint="consistent" timing="initial"/>
+			
+			<!--<mapping:petrbf-compact-tps-c2 support-radius="0.05"
+				direction="write" from="SU2_Mesh0" to="Rigid_Mesh"
+				constraint="conservative" timing="initial"/>-->
+			
+			<!--<mapping:petrbf-compact-tps-c2 support-radius="0.05"
+				direction="read" from="Rigid_Mesh" to="SU2_Mesh0"
+				constraint="consistent" timing="initial"/>-->
 			
 			<watch-point mesh="SU2_Mesh0" name="tip" coordinate="-0.25;0.0" />
 			<watch-point mesh="SU2_Mesh0" name="tail" coordinate="0.75;0.0" />
@@ -49,7 +57,7 @@
 		
 		<coupling-scheme:parallel-implicit>
 			<participants first="SU2_CFD" second="MBDyn"/>
-			<max-time value="4.0"/>
+			<max-time value="0.5"/>
 			<timestep-length value="5e-3" />
 			<exchange data="Forces0" mesh="Rigid_Mesh" from="SU2_CFD" to="MBDyn"/>
 			<exchange data="DisplacementDeltas0" mesh="Rigid_Mesh" from="MBDyn" to="SU2_CFD" />

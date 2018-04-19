@@ -49,7 +49,7 @@
 		
 		<coupling-scheme:parallel-implicit>
 			<participants first="SU2_CFD" second="MBDyn"/>
-			<max-time value="4.0"/>
+			<max-time value="0.5"/>
 			<timestep-length value="5e-3" />
 			<exchange data="Forces0" mesh="Rigid_Mesh" from="SU2_CFD" to="MBDyn"/>
 			<exchange data="DisplacementDeltas0" mesh="Rigid_Mesh" from="MBDyn" to="SU2_CFD" />
