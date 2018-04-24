@@ -224,6 +224,7 @@ int main(int argc, char **argv) {
 
 	// Start coupling:
 	while (interface.isCouplingOngoing()){
+
 		if(interface.isActionRequired(cowic)){
 			// When an implicit coupling scheme is used, checkpointing is required
 			std::cout << "--- cowic ---" << std::endl;
@@ -232,6 +233,7 @@ int main(int argc, char **argv) {
 			// saveOldState(); // save checkpoint
 			interface.fulfilledAction(cowic);
 		}
+
 
 		// Send dt to MBDyn
 		std::cout << "send dt (" << precice_dt <<  ") to MBDyn... " << std::endl;
@@ -262,14 +264,19 @@ int main(int argc, char **argv) {
 		// compute force and moment at MDbyn node
 		computeForces(forces, coords, vertexSize, ca, node);
 
+
+		// Checkpoint
 		/*
 		if(interface.isActionRequired(cowic)){
+			// When an implicit coupling scheme is used, checkpointing is required
+			// stub of function as described in the adapter example
+			// saveOldState(); // save checkpoint
 			std::cout << "--- cowic 2 ---" << std::endl;
 			std::cout << cowic << std::endl;
 			interface.fulfilledAction(cowic);
-
 		}
 		*/
+
 
 		if(interface.isActionRequired(coric)){
 			// timestep not converged
@@ -277,8 +284,7 @@ int main(int argc, char **argv) {
 			node->PutForces(false);
 			interface.fulfilledAction(coric);
 			std::cout << "---- NOT Converged ----" << std::endl;
-		}
-		else{
+		}else{
 			// timestep converged
 			node->PutForces(true);
 			std::cout << "**** Converged ****" << std::endl;
